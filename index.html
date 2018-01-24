@@ -1,0 +1,59 @@
+<head>
+
+<script src='js/jquery.min.js'></script>
+<script type="text/javascript" src="js/d3.js"></script>
+<script src='js/commonOperation.js'></script>
+<script src='js/alphaBeta.js'></script>
+<style>
+
+#this_div{
+	position:absolute;
+	width:600px;
+	height:500px;
+	left:300px;
+	top:100px;
+}
+
+</style>
+
+</head>
+
+
+
+<body>
+
+<div id="this_div"></div>
+
+
+
+<script>
+var rects = [[],[],[],[],[],[],[],[]];
+	var svg = d3.select("#this_div").append("svg")
+					.attr("width",600)
+					.attr("height",500);
+
+	var ifExist = [[],[],[],[],[],[],[],[]];
+
+	var total_times = 0;
+	var num_of_blacks = 2;
+	var num_of_whites = 2;
+	var text_1,text_2;
+
+	for(var i=0;i<8;i++)
+		for(var j=0;j<8;j++)
+			ifExist[i].push(0);
+
+	ifExist[3][3] = ifExist[4][4] = 1;
+	ifExist[3][4] = ifExist[4][3] = 2;
+	
+	
+
+	initialize();
+
+
+
+</script>
+
+
+
+</body>
