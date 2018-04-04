@@ -27,7 +27,7 @@
 
 
 <script>
-var rects = [[],[],[],[],[],[],[],[]];
+	var rects = [[],[],[],[],[],[],[],[]];
 	var svg = d3.select("#this_div").append("svg")
 					.attr("width",600)
 					.attr("height",500);
@@ -38,6 +38,8 @@ var rects = [[],[],[],[],[],[],[],[]];
 	var num_of_blacks = 2;
 	var num_of_whites = 2;
 	var text_1,text_2;
+	var cur_spot = svg.append('circle').attr('cx',0).attr('cy',0).attr('r',0).attr('id',"spot");
+	var end_flag = 0;
 
 	for(var i=0;i<8;i++)
 		for(var j=0;j<8;j++)
