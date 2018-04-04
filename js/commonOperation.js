@@ -1,12 +1,51 @@
-
+function gameOver(){
+	var sum  = 0;
+	var whites = 0,blacks = 0;
+	for(var i=0;i<8;i++){
+		for(var j=0;j<8;j++){
+			if(ifExist[i][j] == 1){whites++;sum++;}
+			else if(ifExist[i][j] == 2){blacks++;sum++;}
+			
+		}
+	}
+			
+			
+			
+	if(sum == 64){
+		end_flag = 1;
+		if(whites > blacks){
+			alert("you win")
+			return;
+		}
+		else{
+			alert("computer wins");
+			return;
+		}
+	}
+	
+	else{	
+		if(!anySpaceToPut(ifExist,1) && !anySpaceToPut(ifExist,2)){
+			end_flag = 1;
+			if(whites > blacks){
+			alert("you win")
+			return;
+			}
+			else{
+				alert("computer wins");
+				return;
+			}
+		}
+	}
+}
 	
 	
 
 function computerEvent(){
+	if(end_flag)return;
 	if(total_times%2 == 1){
 								Table = copyStr(ifExist);
 								if(!anySpaceToPut(Table,2)){
-									alert("对方无子可下");
+									alert("computer cannot move");
 									total_times++;
 									return ;
 								}
@@ -18,8 +57,8 @@ function computerEvent(){
 											countNum++;
 											
 								var result;
-								if(countNum < 6)		
-									result = alphaBeta.res(Table,countNum,-Infinity,Infinity);
+								if(countNum <= 6)		
+									result = alphaBeta.res(Table,countNum - 1,-Infinity,Infinity);
 									
 								else	
 									result = alphaBeta.res(Table,6,-Infinity,Infinity);
@@ -52,14 +91,22 @@ function computerEvent(){
 								
 								total_times++;
 								}
+								gameOver();
 }
 
 function userEvent(this_x,this_y){
-
+								if(end_flag)return;
 								
 								if(ifExist[this_y][this_x] == 0 && total_times%2 == 0){
 									
 									var this_turn = total_times%2+1;
+									
+									Table = copyStr(ifExist);
+								if(!anySpaceToPut(Table,1)){
+									alert("you cannot move");
+									total_times++;
+									return ;
+								}
 								
 									
 									if(this_y<7&&ifExist[this_y+1][this_x] !=this_turn &&ifExist[this_y+1][this_x] !=0){
@@ -254,7 +301,7 @@ function userEvent(this_x,this_y){
 								
 								}
 								
-								
+								gameOver();
 								
 }
 
@@ -454,6 +501,8 @@ function ifToPutChess(this_turn,table,this_x,this_y){
 function makeRealMove(this_x,this_y,this_turn){
 		
 		console.log(this_x,this_y);
+		svg.select("#spot").remove();
+		
 
 		if(this_y<7&&ifExist[this_y+1][this_x] !=this_turn &&ifExist[this_y+1][this_x] !=0){
 				var k = 1;
@@ -622,6 +671,8 @@ function makeRealMove(this_x,this_y,this_turn){
 					}
 				
 			}
+			cur_spot = svg.append('circle').attr('cx',this_x*40+20).attr('cy',this_y*40+20).attr('r',3).attr('id',"spot")
+				.attr('fill','white').attr('stroke','black');
 		
 }
 
