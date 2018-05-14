@@ -56,7 +56,22 @@ function computerEvent(){
 										if(ifExist[i][j] == 0)
 											countNum++;
 											
+								if(countNum == 1){
+									for(var i=0;i<8;i++){
+										for(var j=0;j<8;j++){
+											if(ifToPutChess(2,ifExist,i,j)){
+												makeRealMove(i,j,2);
+												return;
+											}
+										}
+									}
+								}
+								
 								var result;
+								var k ;
+								if(countNum <= 6)
+									k = countNum;
+								else k = 6;
 								if(countNum <= 6)		
 									result = alphaBeta.res(Table,countNum - 1,-Infinity,Infinity);
 									
@@ -66,8 +81,9 @@ function computerEvent(){
 								if(result[0] == undefined)
 									result = alphaBeta.res(Table,1,-Infinity,Infinity);
 									
-								if(result[0] == -1){
-									//console.log(Table);
+								while(result[0] == -1 && k >=1){
+									result = alphaBeta.res(Table,k,-Infinity,Infinity);
+									k--;
 								}
 								
 								
@@ -301,7 +317,7 @@ function userEvent(this_x,this_y){
 								
 								}
 								
-								gameOver();
+								
 								
 }
 
@@ -317,6 +333,7 @@ function initialize(){
 									var this_y = $(this).attr('value')%10;
 									var this_x = ($(this).attr('value')-this_y)/10;
 									userEvent(this_x,this_y);
+									gameOver();
 							})
 							.on('mousemove',computerEvent);
 		rects[i].push(thisRect);
