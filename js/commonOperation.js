@@ -1,3 +1,130 @@
+(function() {
+    $.MsgBox = {
+        Alert: function(msg) {
+            GenerateHtml("alert", msg);
+            btnOk(); //alert只是弹出消息，因此没必要用到回调函数callback
+            
+        },
+        Confirm: function(msg, callback) {
+            GenerateHtml("confirm", msg);
+            btnOk(callback);
+            
+        }
+		 
+    }
+	var GenerateHtml = function(type, msg) {
+        var _html = "";
+        _html += '<div id="mb_box"></div><div id="mb_con"><span id="mb_tit">notice</span>';
+        _html += '<a id="mb_ico">x</a><div id="mb_msg">' + msg + '</div><div id="mb_btnbox">';
+        if (type == "alert") {
+            _html += '<input id="mb_btn_ok" type="button" value="ok" />';
+        }
+        if (type == "confirm") {
+            _html += '<input id="mb_btn_ok" type="button" value="ok" />';
+          
+        }
+        _html += '</div></div>';
+        //必须先将_html添加到body，再设置Css样式
+        $("body").append(_html);
+        //生成Css
+        GenerateCss();
+    }
+
+    //生成Css
+    var GenerateCss = function() {
+        $("#mb_box").css({
+            width: '100%',
+            height: '100%',
+            zIndex: '99999',
+            position: 'fixed',
+            filter: 'Alpha(opacity=60)',
+            backgroundColor: 'black',
+            top: '0',
+            left: '0',
+            opacity: '0.6'
+        });
+        $("#mb_con").css({
+            zIndex: '999999',
+            width: '400px',
+            position: 'fixed',
+            backgroundColor: 'White',
+            borderRadius: '15px'
+        });
+        $("#mb_tit").css({
+            display: 'block',
+            fontSize: '14px',
+            color: '#444',
+            padding: '10px 15px',
+            backgroundColor: '#DDD',
+            borderRadius: '15px 15px 0 0',
+            borderBottom: '3px solid #009BFE',
+            fontWeight: 'bold'
+        });
+        $("#mb_msg").css({
+            padding: '20px',
+            lineHeight: '20px',
+            borderBottom: '1px dashed #DDD',
+            fontSize: '13px'
+        });
+        $("#mb_ico").css({
+            display: 'block',
+            position: 'absolute',
+            right: '10px',
+            top: '9px',
+            border: '1px solid Gray',
+            width: '18px',
+            height: '18px',
+            textAlign: 'center',
+            lineHeight: '16px',
+            cursor: 'pointer',
+            borderRadius: '12px',
+            fontFamily: '微软雅黑'
+        });
+        $("#mb_btnbox").css({
+            margin: '15px 0 10px 0',
+            textAlign: 'center'
+        });
+        $("#mb_btn_ok,#mb_btn_no").css({
+            width: '85px',
+            height: '30px',
+            color: 'white',
+            border: 'none'
+        });
+        $("#mb_btn_ok").css({
+            backgroundColor: '#168bbb'
+        });
+       
+        //右上角关闭按钮hover样式
+        $("#mb_ico").hover(function() {
+            $(this).css({
+                backgroundColor: 'Red',
+                color: 'White'
+            });
+        }, function() {
+            $(this).css({
+                backgroundColor: '#DDD',
+                color: 'black'
+            });
+        });
+        var _widht = document.documentElement.clientWidth; //屏幕宽
+        var _height = document.documentElement.clientHeight; //屏幕高
+        var boxWidth = $("#mb_con").width();
+        var boxHeight = $("#mb_con").height();
+        //让提示框居中
+        $("#mb_con").css({
+            top: (_height - boxHeight) / 2 + "px",
+            left: (_widht - boxWidth) / 2 + "px"
+        });
+    }
+	var btnOk = function(callback) {
+        $("#mb_btn_ok").click(function() {
+            $("#mb_box,#mb_con").remove();
+            if (typeof(callback) == 'function') {
+                callback();
+            }
+        });
+    }
+})();
 function gameOver(){
 	var sum  = 0;
 	var whites = 0,blacks = 0;
@@ -20,11 +147,11 @@ function gameOver(){
 	if(!end_flag&&sum == 64){
 		end_flag = 1;
 		if(whites > blacks){
-			alert("you win")
+			 $.MsgBox.Alert("you win")
 			return;
 		}
 		else{
-			alert("computer wins");
+			 $.MsgBox.Alert("computer wins");
 			return;
 		}
 	}
@@ -33,11 +160,11 @@ function gameOver(){
 		if(!end_flag&&!anySpaceToPut(ifExist,1) && !anySpaceToPut(ifExist,2)){
 			end_flag = 1;
 			if(whites > blacks){
-			alert("you win")
+			 $.MsgBox.Alert("you win!")
 			return;
 			}
 			else{
-				alert("computer wins");
+				 $.MsgBox.Alert("computer wins!");
 				return;
 			}
 		}
@@ -51,7 +178,7 @@ function computerEvent(){
 	if(total_times%2 == 1){
 								Table = copyStr(ifExist);
 								if(!anySpaceToPut(Table,2)){
-									alert("computer cannot move");
+									 $.MsgBox.Alert("computer cannot move");
 									total_times++;
 									return ;
 								}
@@ -125,7 +252,7 @@ function userEvent(this_x,this_y){
 									
 									Table = copyStr(ifExist);
 								if(!anySpaceToPut(Table,1)){
-									alert("you cannot move");
+									 $.MsgBox.Alert("you cannot move");
 									total_times++;
 									return ;
 								}
@@ -333,15 +460,13 @@ function initialize(){
 		for(var j=0;j<8;j++){
 			thisRect = svg.append('rect').attr('x',i*40).attr('y',j*40)
 							.attr('width',40).attr('height',40)
-							.attr('fill','white').attr("stroke","black")
+							.attr('fill','#CC8F33').attr("stroke","black")
 							.attr('value',i*10+j)
 							.on('click',function(){
 									var this_y = $(this).attr('value')%10;
 									var this_x = ($(this).attr('value')-this_y)/10;
 									userEvent(this_x,this_y);
-									
-							})
-							.on('mousemove',function(){
+									gameOver();
 									computerEvent();
 									gameOver();
 							});
@@ -426,7 +551,7 @@ function test(Table){
 }
 
 
-//��⵱ǰλ���Ƿ�������
+//检测当前位置是否能落子
 function ifToPutChess(this_turn,table,this_x,this_y){								
 		if(table[this_y][this_x] != 0)
 			return false;
@@ -822,6 +947,9 @@ function makeMove(table,this_x,this_y,this_turn){
 			return tmp_table;
 		
 }
+
+
+
 
 
 
