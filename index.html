@@ -23,7 +23,8 @@
 <body>
 
 <div id="this_div"></div>
-
+<button id="btn" onclick ="func()">change</button>
+<button id="btn" onclick ="start()">start</button>
 
 
 <script>
@@ -39,7 +40,12 @@
 	var num_of_whites = 2;
 	var text_1,text_2;
 	var cur_spot = svg.append('circle').attr('cx',0).attr('cy',0).attr('r',0).attr('id',"spot");
-	var end_flag = 0;
+	var start_flag = 0,end_flag = 0;
+	
+	var computer = 2,player = 1;
+	
+	var func = function(){computer = 3-computer;player = 3-player;};
+	var start = function(){start_flag = 1;initialize();}
 
 	for(var i=0;i<8;i++)
 		for(var j=0;j<8;j++)
@@ -49,8 +55,8 @@
 	ifExist[3][4] = ifExist[4][3] = 2;
 	
 	
-
-	initialize();
+	//if(start_flag)
+		//initialize();
 
 
 
