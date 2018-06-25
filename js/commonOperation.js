@@ -2,7 +2,7 @@
     $.MsgBox = {
         Alert: function(msg) {
             GenerateHtml("alert", msg);
-            btnOk(); //alertÖ»ÊÇµ¯³öÏûÏ¢£¬Òò´ËÃ»±ØÒªÓÃµ½»Øµ÷º¯Êıcallback
+            btnOk(); //alertåªæ˜¯å¼¹å‡ºæ¶ˆæ¯ï¼Œå› æ­¤æ²¡å¿…è¦ç”¨åˆ°å›è°ƒå‡½æ•°callback
             
         },
         Confirm: function(msg, callback) {
@@ -24,13 +24,13 @@
           
         }
         _html += '</div></div>';
-        //±ØĞëÏÈ½«_htmlÌí¼Óµ½body£¬ÔÙÉèÖÃCssÑùÊ½
+        //å¿…é¡»å…ˆå°†_htmlæ·»åŠ åˆ°bodyï¼Œå†è®¾ç½®Cssæ ·å¼
         $("body").append(_html);
-        //Éú³ÉCss
+        //ç”ŸæˆCss
         GenerateCss();
     }
 
-    //Éú³ÉCss
+    //ç”ŸæˆCss
     var GenerateCss = function() {
         $("#mb_box").css({
             width: '100%',
@@ -78,7 +78,7 @@
             lineHeight: '16px',
             cursor: 'pointer',
             borderRadius: '12px',
-            fontFamily: 'Î¢ÈíÑÅºÚ'
+            fontFamily: 'å¾®è½¯é›…é»‘'
         });
         $("#mb_btnbox").css({
             margin: '15px 0 10px 0',
@@ -94,7 +94,7 @@
             backgroundColor: '#168bbb'
         });
        
-        //ÓÒÉÏ½Ç¹Ø±Õ°´Å¥hoverÑùÊ½
+        //å³ä¸Šè§’å…³é—­æŒ‰é’®hoveræ ·å¼
         $("#mb_ico").hover(function() {
             $(this).css({
                 backgroundColor: 'Red',
@@ -106,11 +106,11 @@
                 color: 'black'
             });
         });
-        var _widht = document.documentElement.clientWidth; //ÆÁÄ»¿í
-        var _height = document.documentElement.clientHeight; //ÆÁÄ»¸ß
+        var _widht = document.documentElement.clientWidth; //å±å¹•å®½
+        var _height = document.documentElement.clientHeight; //å±å¹•é«˜
         var boxWidth = $("#mb_con").width();
         var boxHeight = $("#mb_con").height();
-        //ÈÃÌáÊ¾¿ò¾ÓÖĞ
+        //è®©æç¤ºæ¡†å±…ä¸­
         $("#mb_con").css({
             top: (_height - boxHeight) / 2 + "px",
             left: (_widht - boxWidth) / 2 + "px"
@@ -146,7 +146,18 @@ function gameOver(){
 			
 	if(!end_flag&&sum == 64){
 		end_flag = 1;
-		if(whites > blacks){
+		if(computer==2){
+			if(whites > blacks){
+				$.MsgBox.Alert("you win")
+				return;
+			}
+			else{
+				$.MsgBox.Alert("computer wins");
+				return;
+			}
+		}
+		else{
+			if(whites < blacks){
 			 $.MsgBox.Alert("you win")
 			return;
 		}
@@ -154,30 +165,44 @@ function gameOver(){
 			 $.MsgBox.Alert("computer wins");
 			return;
 		}
+		}
 	}
 	
 	else{	
 		if(!end_flag&&!anySpaceToPut(ifExist,1) && !anySpaceToPut(ifExist,2)){
 			end_flag = 1;
+			if(computer==2){
 			if(whites > blacks){
-			 $.MsgBox.Alert("you win!")
-			return;
-			}
-			else{
-				 $.MsgBox.Alert("computer wins!");
+				$.MsgBox.Alert("you win")
 				return;
 			}
+			else{
+				$.MsgBox.Alert("computer wins");
+				return;
+			}
+		}
+		else{
+			if(whites < blacks){
+			 $.MsgBox.Alert("you win")
+			return;
+		}
+		else{
+			 $.MsgBox.Alert("computer wins");
+			return;
+		}
+		}
 		}
 	}
 }
 	
 	
 
-function computerEvent(){
+function computerEvent(computer){
 	if(end_flag)return;
-	if(total_times%2 == 1){
+	var this_turn = total_times%2+1;
+	if(this_turn == computer){
 								Table = copyStr(ifExist);
-								if(!anySpaceToPut(Table,2)){
+								if(!anySpaceToPut(Table,computer)){
 									 $.MsgBox.Alert("computer cannot move");
 									total_times++;
 									return ;
@@ -192,8 +217,8 @@ function computerEvent(){
 								if(countNum == 1){
 									for(var i=0;i<8;i++){
 										for(var j=0;j<8;j++){
-											if(ifToPutChess(2,ifExist,i,j)){
-												makeRealMove(i,j,2);
+											if(ifToPutChess(computer,ifExist,i,j)){
+												makeRealMove(i,j,computer);
 												return;
 											}
 										}
@@ -206,24 +231,24 @@ function computerEvent(){
 									k = countNum;
 								else k = 6;
 								if(countNum < 6){		
-									if(countNum%2==0)result = alphaBeta.res(Table,countNum,-Infinity,Infinity);
-									else result = alphaBeta.res(Table,countNum-1,-Infinity,Infinity);
+									if(countNum%2==0)result = alphaBeta.res(Table,countNum,-Infinity,Infinity,computer);
+									else result = alphaBeta.res(Table,countNum-1,-Infinity,Infinity,computer);
 									
 								}
 									
 								else	
-									result = alphaBeta.res(Table,6,-Infinity,Infinity);
+									result = alphaBeta.res(Table,6,-Infinity,Infinity,computer);
 								
 								if(result[0] == undefined)
-									result = alphaBeta.res(Table,1,-Infinity,Infinity);
+									result = alphaBeta.res(Table,1,-Infinity,Infinity,computer);
 									
 								while(result[0] == -1 && k >=1){
-									result = alphaBeta.res(Table,k,-Infinity,Infinity);
+									result = alphaBeta.res(Table,k,-Infinity,Infinity,computer);
 									k-=2;
 								}
 								
 								
-								makeRealMove(result[0],result[1],2);
+								makeRealMove(result[0],result[1],computer);
 								
 								num_of_blacks = num_of_whites = 0;
 								
@@ -242,19 +267,21 @@ function computerEvent(){
 										
 								
 								total_times++;
-								}
+							}
 							
 }
 
-function userEvent(this_x,this_y){
+function userEvent(this_x,this_y,player){
 								if(end_flag)return;
+								var this_turn  = total_times%2+1;
 								
-								if(ifExist[this_y][this_x] == 0 && total_times%2 == 0){
+								if(ifExist[this_y][this_x] == 0 && this_turn == player){
 									
-									var this_turn = total_times%2+1;
+									//var this_turn = total_times%2+1;
+									
 									
 									Table = copyStr(ifExist);
-								if(!anySpaceToPut(Table,1)){
+								if(!anySpaceToPut(Table,player)){
 									 $.MsgBox.Alert("you cannot move");
 									total_times++;
 									return ;
@@ -468,9 +495,9 @@ function initialize(){
 							.on('click',function(){
 									var this_y = $(this).attr('value')%10;
 									var this_x = ($(this).attr('value')-this_y)/10;
-									userEvent(this_x,this_y);
+									userEvent(this_x,this_y,player);
 									gameOver();
-									computerEvent();
+									computerEvent(computer);
 									gameOver();
 							});
 		rects[i].push(thisRect);
@@ -507,6 +534,8 @@ function initialize(){
 	
 	text_2 = svg.append('text').attr('x',500).attr('y',210).attr('font-size','20px').attr('font-family','sans-serif').attr('fill','black').text(num_of_blacks);
 
+	if(computer<player)
+		computerEvent(computer);
 
 }
 
@@ -554,7 +583,7 @@ function test(Table){
 }
 
 
-//¼ì²âµ±Ç°Î»ÖÃÊÇ·ñÄÜÂä×Ó
+//æ£€æµ‹å½“å‰ä½ç½®æ˜¯å¦èƒ½è½å­
 function ifToPutChess(this_turn,table,this_x,this_y){								
 		if(table[this_y][this_x] != 0)
 			return false;
@@ -950,6 +979,9 @@ function makeMove(table,this_x,this_y,this_turn){
 			return tmp_table;
 		
 }
+
+
+
 
 
 
