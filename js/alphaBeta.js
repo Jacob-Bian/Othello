@@ -1,18 +1,19 @@
 
 var alphaBeta = function(){
 
-function evaluate(table){
+function evaluate(table,computer){
 	var sum = 0;
+	var player = 3 - computer;
 	for(var i=0;i<8;i++)
 		for(var j=0;j<8;j++){
-			if(table[i][j] == 1){
+			if(table[i][j] == player){
 				sum--;
-				if(i==0||j==0||i==7||j==7)
-					sum--;
+				if((i==0||j==0||i==7||j==7))
+					sum-=2;
 			}
-			else if(table[i][j] == 2){
+			else if(table[i][j] == computer){
 				sum++;
-				if(i==0||j==0||i==7||j==7)
+				if((i==0||j==0||i==7||j==7)&&!((i==0&&j==1) || (i==1&&j==0) || (i==0&&j==6) || (i==6&&j==0) || (i==1&&j==7) || (i==7&&j==1) ||(i==7&&j==6) ||(i==6&&j==7)))
 					sum++;
 				
 					
@@ -23,26 +24,26 @@ function evaluate(table){
 			
 		}
 		
-	if(table[1][1] == 2 || table[6][6] == 2 || table[6][1] == 2 || table[1][6] == 2)
-				sum -= 25;
-	if(table[0][1] == 2 || table[1][0] == 2 || table[0][6] == 2 || table[6][0] == 2 || table[1][7] == 2 || table[7][1] ==2 || table[7][6] ==2 ||table[6][7] == 2)
-				sum -= 30;
-	if(table[0][0] == 2 || table[7][7] == 2 || table[7][0] == 2 || table[0][7] == 2)
-				sum += 20;
+	if(table[1][1] == computer || table[6][6] == computer || table[6][1] == computer || table[1][6] == computer)
+				sum -= 50;
+	if((table[0][1] == computer&&table[0][2] == player) || (table[1][0] == computer&&table[2][0] == player) || (table[0][6] == computer&&table[0][5] == player)  || (table[6][0] == computer &&table[5][0] == player) || (table[1][7] == computer&&table[2][7] == player) || (table[7][1] == computer&&table[7][2]==player) || (table[7][6] ==computer&&table[7][5]==player) || (table[6][7] == computer && table[5][7] == player))
+				sum -= 40;
+	if(table[0][0] == computer || table[7][7] == computer || table[7][0] == computer || table[0][7] == computer)
+				sum += 30;
 				
-	if(table[0][0] == 1 || table[7][7] == 1 || table[7][0] == 1 || table[0][7] == 1)
-				sum -= 25;
-	if(table[0][1] == 1 || table[1][0] == 1 || table[0][6] == 1 || table[6][0] == 1 || table[1][7] == 1 || table[7][1] ==1 || table[7][6] ==1 ||table[6][7] == 1)
-				sum += 10;
-	if(table[1][1] == 1 || table[6][6] == 1 || table[6][1] == 1 || table[1][6] == 1)
+	if(table[0][0] == player || table[7][7] == player || table[7][0] == player || table[0][7] == player)
+				sum -= 30;
+	if(table[0][1] == player || table[1][0] == player || table[0][6] == player || table[6][0] == player || table[1][7] == player || table[7][1] ==player || table[7][6] ==player ||table[6][7] == player)
+				sum += 5;
+	if(table[1][1] == player || table[6][6] == player || table[6][1] == player || table[1][6] == player)
 				sum += 15;
 	
 	return sum;
 }
 
-function alphaBeta(table,depth,alpha,beta){
+function alphaBeta(table,depth,alpha,beta,computer){
 	var flag = 0;
-	var this_turn = (depth+1) % 2 +1;
+	var this_turn = (depth+computer-1) % 2 +1;
 	var max = - Infinity;
 	var sign = [0,-1,1];
 	var cur_x = -1;
@@ -50,7 +51,7 @@ function alphaBeta(table,depth,alpha,beta){
 	var tmp_table;
 	
 	if(!anySpaceToPut(table,this_turn)){
-		if(this_turn == 1)
+		if(this_turn == 3-computer)
 			return Infinity;
 		else 
 			return -Infinity;
@@ -58,14 +59,14 @@ function alphaBeta(table,depth,alpha,beta){
 	
 	if(depth == 0){
 		
-		return [-1,-1,evaluate(table)];
+		return [-1,-1,evaluate(table,computer)];
 		//else if(this_turn == 1)return [-1,-1,-evaluate(table)];
 	}
 	
 	
 	
 	
-		for(var i=0;i<8;i++)                                     //枚举所有可能放置棋子的位置
+		for(var i=0;i<8;i++)                                     //鏋氫妇鎵�鏈夊彲鑳芥斁缃瀛愮殑浣嶇疆
 			for(var j=0;j<8;j++){
 				if(ifToPutChess(this_turn,table,i,j)){
 					flag = 1;
@@ -74,7 +75,7 @@ function alphaBeta(table,depth,alpha,beta){
 					//console.log(tmp_table);
 					
 					var val;
-					tmp = alphaBeta(tmp_table,depth-1,-beta,-alpha);
+					tmp = alphaBeta(tmp_table,depth-1,-beta,-alpha,computer);
 					if(tmp.length == 1)
 						val = -Infinity;
 					else val = - tmp[2];
@@ -100,8 +101,8 @@ function alphaBeta(table,depth,alpha,beta){
 			
 		if(!flag){
 			//return -Infinity;
-			if(this_turn == 1)return Infinity;
-			else if(this_turn == 2)return -Infinity;
+			if(this_turn == 3-computer)return Infinity;
+			else if(this_turn == computer)return -Infinity;
 		}
 		
 		//console.log([alpha,beta,depth]);
